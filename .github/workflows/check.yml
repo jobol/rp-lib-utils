@@ -1,0 +1,40 @@
+name: Check of embedded tests
+run-name: Check triggered by ${{ github.actor }}
+on: [push]
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-slim
+    steps:
+      - run: echo "prepare installing"
+      - run: sudo apt-get update
+      - run: echo "installing tools"
+      - run: sudo apt-get install -y git gcc cmake gcovr
+      - run: echo "installing functional requirements"
+      - run: sudo apt-get install -y libcurl4-gnutls-dev libjson-c-dev libyaml-dev
+      - run: echo "installing test requirements"
+      - run: sudo apt-get install -y check
+      - run: echo "checking out"
+      - uses: actions/checkout@v7
+      - run: echo "prepare"
+      - run: cmake . -DCMAKE_BUILD_TYPE=profile
+      - run: echo "analyze"
+      - run: make  analyze
+      - run: echo "compile"
+      - run: make
+      - run: echo "test"
+      - run: make  test |& tee make-test.out
+      - run: echo "coverage"
+      - run: mkdir html
+      - run: gcovr --html-nested html/index.html
+      - run: gcovr --cobertura cobertura.xml
+      - uses: actions/upload-artifact@v7
+        with:
+          name: COBERTURA
+          path: cobertura.xml
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage report
+          path: html
+
+
