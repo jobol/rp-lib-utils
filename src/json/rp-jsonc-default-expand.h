@@ -39,6 +39,8 @@
 
 #define RP_JSONEXP_$REFS            512 /**< for expanding {"$ref":"PATH"} to content(PATH) */
 #define RP_JSONEXP_DELETE_NULLS    1024 /**< for removing fields whose value is null */
+#define RP_JSONEXP_$REFS_MULTIPLE  2048 /**< allow expanding multiple refs {"$ref":["PATH",...]} */
+#define RP_JSONEXP_$REFS_DIR       4096 /**< allow expanding to files of directories (not recursive) */
 
 
 /** for replacing strings encoding booleans */
@@ -60,11 +62,19 @@
                                    |RP_JSONEXP_SCAN_NULL \
                                    |RP_JSONEXP_SCAN_NUMBER)
 
-/** for replacing strings encoding any value, expanding $ref adn removing null fields*/
+/** for expanding all directories and multiple files */
+#define RP_JSONEXP_$REFS_ALL       (RP_JSONEXP_$REFS \
+                                   |RP_JSONEXP_$REFS_MULTIPLE \
+                                   |RP_JSONEXP_$REFS_DIR)
+
+/** for replacing strings encoding any value, expanding $ref and removing null fields */
 #define RP_JSONEXP_ALL             (RP_JSONEXP_SCAN_ANY \
                                    |RP_JSONEXP_ENVVAR \
 				   |RP_JSONEXP_$REFS \
 				   |RP_JSONEXP_DELETE_NULLS)
+
+/** for replacing strings encoding any value, expanding all $ref and removing null fields */
+#define RP_JSONEXP_ALL_ALL         (RP_JSONEXP_ALL | RP_JSONEXP_$REFS_ALL)
 
 /**
  * Expands strings and references of object and replace it with it new value.

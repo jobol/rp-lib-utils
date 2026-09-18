@@ -29,12 +29,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <limits.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fts.h>
 
 #include <json-c/json.h>
 
@@ -44,7 +39,11 @@
 #include "rp-jsonc-expand.h"
 #include "rp-jsonc-path.h"
 
-#define MERGEOPT rp_jsonc_merge_option_replace
+#ifndef WITH_DIRENT
+#define WITH_DIRENT 1
+#endif
+
+#define MERGEOPT rp_jsonc_merge_option_join_or_replace
 
 /**
  * callback data for expanding references
@@ -118,14 +117,101 @@ set_error(
  */
 static
 int
-default_readfunc(
-	void *closure,
-	struct json_object **obj,
+read_file_ref(
+	struct expref *expref,
+	struct json_object *object,
 	const char *filename
 ) {
-	/*struct expref *expref = closure;*/
-	return -!(*obj = json_object_from_file (filename));
+	int rc;
+	struct json_object *obj;
+
+	/* read the file */
+	if (expref->readfunc != NULL)
+		rc = expref->readfunc(expref->closure, &obj, filename);
+	else
+		rc = -!(obj = json_object_from_file (filename));
+
+	/* check error */
+	if (rc < 0)
+		set_error(expref, rc, object, "Reading of %s failed", filename);
+	else {
+		/* merge the readen content */
+		if (!json_object_is_type(expref->target, json_type_object))
+			expref->target = obj;
+		else {
+			rp_jsonc_object_merge(expref->target, obj, MERGEOPT);
+			json_object_put(obj);
+		}
+	}
+	return rc;
 }
+
+/**
+ * Read file or directory
+ */
+#if !WITH_DIRENT
+#define read_any_ref read_file_ref
+#else
+#include <sys/types.h>
+#include <dirent.h>
+static
+int
+read_dir_ref(
+	struct expref *expref,
+	struct json_object *object,
+	const char *dirname,
+	DIR *dir
+) {
+	int status = 0;
+	char path[PATH_MAX];
+	size_t lenent, lendir = strlen(dirname);
+	struct dirent *ent;
+
+	if (lendir >= sizeof path)
+		status = -1;
+	else {
+		memcpy(path, dirname, lendir);
+		if (path[lendir - 1] != '/')
+			path[lendir++] = '/';
+		while ((ent = readdir(dir)) != NULL) {
+			/* skip directories */
+			if (ent->d_type == DT_DIR)
+				continue;
+
+			/* make the filename */
+			lenent = strlen(ent->d_name);
+			if (lenent + lendir + 1 > sizeof path) {
+				status = -1;
+				break;
+			}
+			memcpy(&path[lendir], ent->d_name, 1 + lenent);
+
+			/* read the file */
+			status = read_file_ref(expref, object, path);
+			if (status < 0)
+				break;
+		}
+	}
+	closedir(dir);
+	return status;
+}
+
+static
+int
+read_any_ref(
+	struct expref *expref,
+	struct json_object *object,
+	const char *filename
+) {
+	if ((expref->flags & RP_JSONEXP_$REFS_DIR) != 0) {
+		DIR *dir = opendir(filename);
+		if (dir != NULL)
+			return read_dir_ref(expref, object, filename, dir);
+	}
+	return read_file_ref(expref, object, filename);
+}
+#endif
+
 
 /**
  * Called for each object referenced by "$ref", must be a string.
@@ -138,8 +224,6 @@ static void expand_ref(void *closure, struct json_object *object)
 {
 	struct expref *expref = closure;
 	const char *string;
-	struct json_object *obj;
-	int rc;
 
 	/* check type of object */
 	if (!json_object_is_type(object, json_type_string))
@@ -147,23 +231,13 @@ static void expand_ref(void *closure, struct json_object *object)
 	else {
 		/* read the file */
 		string = json_object_get_string(object);
-		rc = expref->readfunc(expref->closure, &obj, string);
-		if (rc < 0)
-			set_error(expref, rc, object, "Reading of %s failed", string);
-		else {
-			if (!json_object_is_type(expref->target, json_type_object))
-				expref->target = obj;
-			else {
-				rp_jsonc_object_merge(expref->target, obj, MERGEOPT);
-				json_object_put(obj);
-			}
-		}
+		read_any_ref(expref, object, string);
 	}
 }
 
 /**
  * Check if the object is to be expanded
- * If yes the return its expansion, otherwise, returns the object
+ * If yes returns its expansion, otherwise, returns the object
  * @see expand_json
  * $ref it accepted to be a string or an array of strings
  *
@@ -182,7 +256,10 @@ static struct json_object *expand_object(void *closure, struct json_object* obje
 	if ((expref->flags & RP_JSONEXP_$REFS) != 0
 	 && json_object_object_get_ex(object, "$ref", &ref)) {
 		expref->target = NULL;
-		rp_jsonc_optarray_for_all(ref, expand_ref, expref);
+		if ((expref->flags & RP_JSONEXP_$REFS_MULTIPLE) != 0)
+			rp_jsonc_optarray_for_all(ref, expand_ref, expref);
+		else
+			expand_ref(expref, ref);
 		if (expref->error_code == 0)
 			object = expref->target;
 		else
@@ -333,7 +410,7 @@ expand_string(
 
 	/*
 	 * scan string for values
-	 * this has to be done after expansion because it
+	 * this has to be done after expansion because
 	 * expansion produces strings possibly standing for values
 	 */
 	if (subst == NULL)
@@ -361,14 +438,8 @@ rp_jsonc_default_expanding(
 
 	expref.flags = flags;
 	expref.root = *object;
-	if (readfunc != NULL) {
-		expref.readfunc = readfunc;
-		expref.closure = closure;
-	}
-	else {
-		expref.readfunc = default_readfunc;
-		expref.closure = &expref;
-	}
+	expref.readfunc = readfunc;
+	expref.closure = closure;
 	expref.error_code = 0;
 	obj = rp_jsonc_expand(expref.root, &expref, expand_object, expand_string);
 	if (obj != expref.root) {

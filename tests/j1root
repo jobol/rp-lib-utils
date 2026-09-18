@@ -1,0 +1,15 @@
+{
+	"solo1": { "$ref": "dir/inc1.json" },
+	"solo2": { "$ref": "dir/inc2.json" },
+	"mixed": { "$ref": [ "dir/inc1.json", "dir/inc2.json" ] },
+	"dir": { "$ref": "dir" },
+	"null": "null",
+	"true": "true",
+	"false": "false",
+	"dix": "10",
+	"dix2": "0b1010",
+	"dix8": "0o12",
+	"dix08": "012",
+	"dix16": "0xa"
+}
+

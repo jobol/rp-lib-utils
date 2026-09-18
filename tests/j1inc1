@@ -1,0 +1,5 @@
+{
+	"array1": [ 1, "022", "null", "true", 7 ],
+	"common": { "inc1": "inc1" },
+	"inc1": "inc1"
+}

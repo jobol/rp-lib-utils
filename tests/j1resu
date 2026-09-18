@@ -1,0 +1,34 @@
+{
+	"solo1": {
+		"array1": [ 1, 18, null, true, 7 ],
+		"common": { "inc1": "inc1" },
+		"inc1": "inc1"
+	},
+	"solo2": {
+		"array2": [ 2, 27, null, false, 7 ],
+		"common": { "inc2": "inc2" },
+		"inc2": "inc2"
+	},
+	"mixed": {
+		"array1": [ 1, 18, null, true, 7 ],
+		"inc1": "inc1",
+		"array2": [ 2, 27, null, false, 7 ],
+		"inc2": "inc2",
+		"common": { "inc1": "inc1", "inc2": "inc2" }
+	},
+	"dir": {
+		"array1": [ 1, 18, null, true, 7 ],
+		"inc1": "inc1",
+		"array2": [ 2, 27, null, false, 7 ],
+		"inc2": "inc2",
+		"common": { "inc1": "inc1", "inc2": "inc2" }
+	},
+	"true": true,
+	"false": false,
+	"dix": 10,
+	"dix2": 10,
+	"dix8": 10,
+	"dix08": 10,
+	"dix16": 10
+}
+

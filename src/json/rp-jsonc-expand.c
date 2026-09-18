@@ -138,7 +138,7 @@ expand(
 		break;
 	case json_type_array:
 		/* arrays are not expanded but their values yes */
-		path.key = 0;
+		path.key = NULL;
 		path.previous = previous;
 		path.depth = previous->depth + 1;
 		path.object = object;
