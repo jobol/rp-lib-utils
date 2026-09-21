@@ -171,6 +171,7 @@ void basic_test(int ret, const char *ct, const char *c)
 	int rc;
 	rp_curl_buffer_t buf;
 	CURL *curl;
+	struct curl_slist *sheads = NULL;
 
 	reply_prepare(ret, ct, c);
 	process = process_just_reply;
@@ -179,14 +180,15 @@ void basic_test(int ret, const char *ct, const char *c)
 	curl = rp_curl_prepare_url(base);
 	ck_assert_ptr_nonnull(curl);
 	memset(&buf, 0, sizeof buf);
-	rc = rp_curl_process(curl, NULL, &buf);
+	rc = rp_curl_process(curl, sheads, &buf);
 	ck_assert_int_eq(rc, 0);
 	if (ct != NULL)
 		ck_assert_str_eq(ct, rp_curl_get_content_type(curl));
 	if (c != NULL)
 		ck_assert_str_eq(c, buf.data);
 	stop_server();
-	rp_curl_cleanup(curl, NULL);
+	free(buf.data);
+	rp_curl_cleanup(curl, sheads);
 }
 
 /*********************************************************************/
