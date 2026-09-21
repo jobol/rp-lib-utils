@@ -60,6 +60,10 @@ const char j1inc2[] =
 #include "j1inc2.inc"
 ;
 
+const char j1subinc[] =
+#include "j1subinc.inc"
+;
+
 const char j1resu[] =
 #include "j1resu.inc"
 ;
@@ -88,9 +92,8 @@ START_TEST (check_default_expand)
 	int rc;
 	struct json_object *obj, *resu;
 
-	obj = json_object_from_file("root.json");
-	ck_assert_ptr_nonnull(obj);
-	rc = rp_jsonc_default_expanding(&obj, NULL, NULL, -1); //RP_JSONEXP_ALL_ALL);
+	obj = NULL;
+	rc = rp_jsonc_default_expanding(&obj, "root.json", NULL, NULL, RP_JSONEXP_ALL_ALL);
 	json_object_to_fd(1, obj, JSON_C_TO_STRING_PRETTY);
 	ck_assert_int_eq(rc, 0);
 	resu = json_object_from_file("resu.json");
@@ -147,6 +150,8 @@ int main(int ac, char **av)
 		rc = wjf("dir/inc1.json", j1inc1);
 	if (rc == 0)
 		rc = wjf("dir/inc2.json", j1inc2);
+	if (rc == 0)
+		rc = wjf("dir/subinc.json", j1subinc);
 	if (rc == 0)
 		rc = wjf("resu.json", j1resu);
 

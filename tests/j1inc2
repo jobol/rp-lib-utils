@@ -1,5 +1,6 @@
 {
 	"array2": [ 2, "033", "null", "false", 7 ],
 	"common": { "inc2": "inc2" },
-	"inc2": "inc2"
+	"inc2": "inc2",
+	"subinc": { "$ref": "subinc.json" }
 }

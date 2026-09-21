@@ -77,16 +77,31 @@
 #define RP_JSONEXP_ALL_ALL         (RP_JSONEXP_ALL | RP_JSONEXP_$REFS_ALL)
 
 /**
- * Expands strings and references of object and replace it with it new value.
- * This function does not load files. It instead calls the given function
- * 'readfunc' with 3 arguments: the given closure, a pointer were the function
- * should store the read JSON and the filename found in $ref. The function
- * 'readfunc' should return 0 on success or a negative value on error.
+ * Expands environment variables reference in strings and
+ * expands include references "$ref" of 'object' according
+ * to requirements of 'flags'.
+ *
+ * The parameter 'object' is a pointer to a pointer to a json-c object.
+ * It can not be NULL but the pointed pointer can be NULL. If 'object'
+ * points to a NULL pointer, the parameter 'path' is used to read the
+ * initial object to expand.
+ *
+ * The parameter 'path' is the path of the json-c object. It is used to
+ * resolve relative inclusions of "$ref". If NULL, the current directory
+ * is used.
  *
  * If 'readfunc' is NULL but flags holds RP_JSONEXP_$REFS, a default loader
  * is used.
  *
- * @param object   pointer to the object to process
+ * If 'readfunc' is not NULL, it should point a function used to load files.
+ * The function 'readfunc' is called with 3 arguments(clo, obj, pat):
+ *  - clo is the given closure, a pointer to any useful data;
+ *  - obj is a pointer were the function should store the read JSON-C object;
+ *  - pat is the path of the file to read.
+ * The function 'readfunc' should return 0 on success or a negative value on error.
+ *
+ * @param object   pointer to the object to process (if pointing NULL, path is read)
+ * @param path     path of the object (or NULL)
  * @param readfunc function for reading the JSON content of a filename (or NULL)
  * @param closure  closure data for readfunc
  * @param flags    bit or of allowed operations (see constants RP_JSONEXP_...)
@@ -97,7 +112,8 @@ extern
 int
 rp_jsonc_default_expanding(
 	struct json_object **object,
-	int (*readfunc)(void *closure, struct json_object **obj, const char *filename),
+	const char *path,
+	int (*readfunc)(void *closure, struct json_object **obj, const char *path),
 	void *closure,
 	int flags
 );
@@ -107,8 +123,8 @@ rp_jsonc_default_expanding(
  */
 static inline
 int
-rp_jsonc_default_expand(struct json_object **object)
+rp_jsonc_default_expand(struct json_object **object, const char *path)
 {
-	return rp_jsonc_default_expanding(object, NULL, NULL, RP_JSONEXP_ALL);
+	return rp_jsonc_default_expanding(object, path, NULL, NULL, RP_JSONEXP_ALL);
 }
 
