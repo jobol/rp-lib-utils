@@ -64,7 +64,7 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
 	size_t sz = size * nmemb;
 	size_t old_size = buffer->size;
 	size_t new_size = old_size + sz;
-	size_t needed = old_size + 1;
+	size_t needed = new_size + 1;
 	char *data = buffer->data;
 	if (needed > buffer->capacity) {
 		data = realloc(data, needed);
