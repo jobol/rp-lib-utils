@@ -2,6 +2,7 @@
 
 - Fix of memory allocation error in rp-curl (#9450)
 - Add including multiple files or directories in $ref expander of JSON-C (#9447)
+- Add expansion of yaml files (#9131)
 
 * version 0.4.0
 

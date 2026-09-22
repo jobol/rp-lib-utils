@@ -40,6 +40,7 @@
 #include <rp-utils/rp-expand-vars.h>
 #include <rp-utils/rp-jsonc-default-expand.h>
 #include <rp-utils/rp-jsonc.h>
+#include <rp-utils/rp-yaml-default-expand.h>
 
 /*********************************************************************/
 
@@ -87,13 +88,33 @@ int wjf(const char *filename, const char *content)
 
 /*********************************************************************/
 
-START_TEST (check_default_expand)
+START_TEST (check_jsonc_default_expand)
 {
 	int rc;
 	struct json_object *obj, *resu;
 
 	obj = NULL;
 	rc = rp_jsonc_default_expanding(&obj, "root.json", NULL, NULL, RP_JSONEXP_ALL_ALL);
+	json_object_to_fd(1, obj, JSON_C_TO_STRING_PRETTY);
+	ck_assert_int_eq(rc, 0);
+	resu = json_object_from_file("resu.json");
+	ck_assert_ptr_nonnull(resu);
+	rc = rp_jsonc_cmp(obj, resu);
+	ck_assert_int_eq(rc, 0);
+	json_object_put(obj);
+	json_object_put(resu);
+}
+END_TEST
+
+/*********************************************************************/
+
+START_TEST (check_yaml_default_expand)
+{
+	int rc;
+	struct json_object *obj, *resu;
+
+	obj = NULL;
+	rc = rp_yaml_default_expand(&obj, "root.json", RP_YAMLEXP_ALL_ALL);
 	json_object_to_fd(1, obj, JSON_C_TO_STRING_PRETTY);
 	ck_assert_int_eq(rc, 0);
 	resu = json_object_from_file("resu.json");
@@ -128,9 +149,11 @@ int main(int ac, char **av)
 	int rc;
 
 	/* declares the tests */
-	mksuite("default-expand-json");
+	mksuite("default-expand");
 		addtcase("default-expand-json");
-			addtest(check_default_expand);
+			addtest(check_jsonc_default_expand);
+		addtcase("default-expand-yaml");
+			addtest(check_yaml_default_expand);
 
 	/* creates the buffer */
 	strcpy(dirbuf, template);

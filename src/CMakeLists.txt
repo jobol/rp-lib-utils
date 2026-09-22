@@ -197,6 +197,7 @@ if(JSON_C_FOUND AND YAML_FOUND)
 	addlibpkg(yaml JSON_C YAML)
 	addch(yaml
 		yaml/rp-yaml
+		yaml/rp-yaml-default-expand
 	)
 endif()
 
