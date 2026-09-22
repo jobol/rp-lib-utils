@@ -33,7 +33,15 @@ static
 int
 readyaml(void *closure, struct json_object **obj, const char *path)
 {
-	return rp_yaml_path_to_json_c(obj, path, NULL);
+	int rc = rp_yaml_path_to_json_c(obj, path, NULL);
+	if (rc < 0) {
+		struct json_object *x = json_object_from_file(path);
+		if (x != NULL) {
+			*obj = x;
+			rc = 0;
+		}
+	}
+	return rc;
 }
 
 int
