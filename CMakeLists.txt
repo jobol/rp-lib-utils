@@ -68,6 +68,7 @@ else()
 		-Werror=implicit-function-declaration
 		-ffunction-sections
 		-fdata-sections
+		-fanalyzer
 		-pipe
 	)
 	string(TOLOWER "${CMAKE_BUILD_TYPE}" btype)
