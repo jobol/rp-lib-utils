@@ -1,5 +1,9 @@
 name: Check of embedded tests
 run-name: Check triggered by ${{ github.actor }}
+
+# Declare default permissions as read only.
+permissions: read-all
+
 on: [push]
 jobs:
   check:
