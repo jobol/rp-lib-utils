@@ -27,11 +27,11 @@
 
 #pragma once
 
-#include <stddef.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
 
 /**
  * structure for returning the value found

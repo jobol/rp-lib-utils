@@ -23,11 +23,11 @@
  */
 #pragma once
 
-#include <stddef.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
 
 /**
 * @brief build the url and escape its arguments in a preallocated buffer

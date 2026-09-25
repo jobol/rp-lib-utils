@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <json-c/json.h>
 
 #define RP_JSONEXP_SCAN_TRUE          1 /**< for replacing "true" by true */
@@ -127,4 +131,8 @@ rp_jsonc_default_expand(struct json_object **object, const char *path)
 {
 	return rp_jsonc_default_expanding(object, path, NULL, NULL, RP_JSONEXP_ALL);
 }
+
+#ifdef	__cplusplus
+}
+#endif
 

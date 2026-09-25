@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #if WITH_SYS_UIO
 
 #include <sys/uio.h>
@@ -42,4 +46,8 @@ struct iovec {
 extern ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
 extern ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
 
+#endif
+
+#ifdef	__cplusplus
+}
 #endif

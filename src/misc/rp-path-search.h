@@ -27,11 +27,11 @@
 
 #pragma once
 
-#include <stddef.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
 
 /**
 * structure for searching in path list
@@ -97,7 +97,7 @@ typedef int (*rp_path_search_item_cb)(void *closure, const rp_path_search_entry_
 *
 * @param closure  closure given at call
 * @param path     the entry
-* @param action   
+* @param action
 */
 typedef int (*rp_path_search_filter_cb)(void *closure, const rp_path_search_entry_t *entry);
 
@@ -227,7 +227,7 @@ extern int rp_path_search_extend_env(rp_path_search_t **paths, const char *var, 
 extern int rp_path_search_list(rp_path_search_t *paths, rp_path_search_cb callback, void *closure);
 
 /**
-* Locates files of filename in the path's list and call the callback 
+* Locates files of filename in the path's list and call the callback
 * for them
 *
 * @param paths the patsh's list
@@ -312,7 +312,7 @@ extern int rp_path_search(rp_path_search_t *paths, int flags, rp_path_search_ite
 /**
 * Enumerate entries matching the name and/or the extension
 *
-* 
+*
 */
 extern int rp_path_search_match(rp_path_search_t *paths, int flags, const char *name, const char *extension, rp_path_search_item_cb callback, void *closure);
 

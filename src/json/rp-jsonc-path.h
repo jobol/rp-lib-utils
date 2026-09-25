@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <json-c/json.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <json-c/json.h>
 
 /**
  * Computes the path location of jso within root. The returned path is a string

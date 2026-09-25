@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <stddef.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
 
 /**
  * Reads the 'file' relative to 'dfd' (see openat) in a freshly

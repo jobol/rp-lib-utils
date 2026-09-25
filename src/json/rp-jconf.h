@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include <stdbool.h>
-#include <json-c/json.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
+#include <json-c/json.h>
 
 extern bool rp_jconf_any(
 		json_object *conf,

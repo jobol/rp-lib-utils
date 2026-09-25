@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #define RPUTILS_VERSION_MAJOR   @PROJECT_VERSION_MAJOR@
 #define RPUTILS_VERSION_MINOR   @PROJECT_VERSION_MINOR@
 #define RPUTILS_VERSION_PATCH   @PROJECT_VERSION_PATCH@
@@ -43,4 +47,8 @@
 
 #define RPUTILS_AFTER_VERSION(major,minor,patch) \
 			RPUTILS_SINCE_VERSION(major,minor,patch)
+
+#ifdef	__cplusplus
+}
+#endif
 

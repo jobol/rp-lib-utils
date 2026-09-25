@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include <stdarg.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stdarg.h>
 
 /*
  Log level is defined by syslog standard:
@@ -90,7 +90,7 @@ extern void rp_vverbose(int loglevel, const char *file, int line, const char *fu
 
 /*
 * If defined, macros belaow change the behaviour of messages.
-* 
+*
 *  - RP_VERBOSE_NO_DATA
 *
 *  - RP_VERBOSE_NO_DETAILS
