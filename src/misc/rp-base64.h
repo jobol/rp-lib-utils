@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
+#include <stdint.h>
 
 /** no error status */
 #define rp_base64_ok        0

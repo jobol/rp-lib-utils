@@ -28,6 +28,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -79,3 +83,7 @@ extern void SHA1_update(SHA1_t *context, const void *data, size_t len);
  * @param digest where to store the result
  */
 extern void SHA1_final(SHA1_t *context, uint8_t digest[SHA1_DIGEST_LENGTH]);
+
+#ifdef	__cplusplus
+}
+#endif

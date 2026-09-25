@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <errno.h>
 
 #ifndef X_E2BIG
@@ -96,3 +100,6 @@
 #define X_ETIMEDOUT       -ETIMEDOUT
 #endif
 
+#ifdef	__cplusplus
+}
+#endif

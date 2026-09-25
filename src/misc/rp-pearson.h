@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <stddef.h>
+#include <stdint.h>
 
 /*
  * Returns a 8 bits hash value for the 'text'.

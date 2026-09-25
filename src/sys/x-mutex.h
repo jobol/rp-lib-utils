@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <pthread.h>
 
 #define x_mutex_t                pthread_mutex_t
@@ -33,3 +37,6 @@
 #define x_mutex_unlock(pmutex)   pthread_mutex_unlock(pmutex)
 #define X_MUTEX_INITIALIZER      PTHREAD_MUTEX_INITIALIZER
 
+#ifdef	__cplusplus
+}
+#endif

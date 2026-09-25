@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #if __ZEPHYR__
 
 #include <zephyr/net/socket.h>
@@ -50,5 +54,8 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#endif
+#endif /* __ZEPHYR */
 
+#ifdef	__cplusplus
+}
+#endif
