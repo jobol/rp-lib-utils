@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <json-c/json.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <json-c/json.h>
 
 /**
  * The expansion path is used to retrieve information on

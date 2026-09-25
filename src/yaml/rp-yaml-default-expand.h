@@ -24,6 +24,10 @@
 
 #pragma once
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #include <json-c/json.h>
 #include "rp-jsonc-default-expand.h"
 
@@ -101,3 +105,6 @@ extern
 int
 rp_yaml_default_expand(struct json_object **object, const char *path, int flags);
 
+#ifdef	__cplusplus
+}
+#endif

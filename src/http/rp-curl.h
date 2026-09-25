@@ -24,11 +24,11 @@
 
 #pragma once
 
-#include <curl/curl.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#include <curl/curl.h>
 
 /**
  * Buffer used for storing read data
