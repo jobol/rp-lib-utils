@@ -4,7 +4,7 @@ run-name: Check triggered by ${{ github.actor }}
 # Declare default permissions as read only.
 permissions: read-all
 
-on: [push]
+on: [push, pull_request]
 jobs:
   check:
     name: check
