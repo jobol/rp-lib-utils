@@ -273,7 +273,6 @@ static int httpSendQuery(httpPoolT *httpPool, const char *url, const httpOptsT *
         {
             if (httpRqt->freeCtx && httpRqt->userData)
                 httpRqt->freeCtx(httpRqt->userData);
-            free(httpRqt);
         }
 
         // we're done
