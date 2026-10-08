@@ -1,0 +1,51 @@
+name: Check of embedded tests
+run-name: Check triggered by ${{ github.actor }}
+
+# Declare default permissions as read only.
+permissions: read-all
+
+on: [push, pull_request]
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-slim
+    steps:
+      - run: echo "prepare installing"
+      - run: sudo apt-get update
+      - run: echo "installing tools"
+      - run: sudo apt-get install -y git gcc cmake gcovr
+      - run: echo "installing functional requirements"
+      - run: sudo apt-get install -y libcurl4-gnutls-dev libjson-c-dev libyaml-dev
+      - run: echo "installing test requirements"
+      - run: sudo apt-get install -y check
+      - run: echo "checking out"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: echo "prepare"
+      - run: cmake . -DCMAKE_BUILD_TYPE=profile
+      - run: echo "analyze"
+      - run: make  analyze
+      - run: echo "compile"
+      - run: make
+      - run: echo "test"
+      - run: make  test |& tee make-test.out
+      - run: echo "coverage"
+      - run: mkdir html
+      - run: gcovr --html-nested html/index.html
+      - run: gcovr --cobertura cobertura.xml
+      - uses: actions/upload-code-coverage@d8e329117199404bba6fc81efe8093dc7c015e34 # v1.4.2
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          file: cobertura.xml
+          language: C
+          label: code-coverage
+          fail-on-error: false
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: COBERTURA
+          path: cobertura.xml
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage report
+          path: html
+
+
