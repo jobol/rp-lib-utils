@@ -107,42 +107,6 @@ OnErrorExit:
     return 0;
 }
 
-ssize_t utilsFileLoad (const char *filepath, char **buffer) {
-    int err;
-    struct stat statbuf;
-    char *data;
-
-    err = stat(filepath, &statbuf);
-    if (err < 0 || !(statbuf.st_mode & S_IREAD)) {
-        goto OnErrorExit;
-    }
-
-    // allocate filesize buffer
-    data= 1+ malloc(statbuf.st_size);
-    if (! data) goto OnErrorExit;
-
-    // open file in readonly
-    int fdread = open (filepath, O_RDONLY);
-    if (fdread <0) goto OnErrorExit;
-
-
-    ssize_t count=0, len;
-    do {
-        len= read(fdread, &data[count], statbuf.st_size-count);
-        count += len;
-
-    } while (len < 0 && errno == EINTR);
-    close (fdread);
-    data[count]='\0'; // close string
-    *buffer= data;
-    return count;
-
-OnErrorExit:
-    fprintf (stderr, "Fail to load file=%s err=%s\n", filepath, strerror(errno));
-    *buffer=NULL;
-    return 0;
-}
-
 // if string is not null extract umask and apply
 mode_t utilsUmaskSetGet (const char *mask) {
 	mode_t oldmask, newmask;

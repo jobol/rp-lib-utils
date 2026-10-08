@@ -83,39 +83,6 @@ const char* utilValue2Label (const nsKeyEnumT *keyvals, const int value) {
     return label;
 }
 
-int utilFileLoad (const char *filepath, char **response) {
-    int err;
-    struct stat statbuf;
-    char *buffer;
-
-    err = stat(filepath, &statbuf);
-    if (err < 0 || !(statbuf.st_mode & S_IREAD)) {
-        goto OnErrorExit;
-    }
-
-    // allocate filesize buffer
-    buffer = malloc(statbuf.st_size+1);
-    if (! buffer) goto OnErrorExit;
-
-    // open file in readonly
-    int fdFile = open (filepath, O_RDONLY);
-    if (fdFile <0) goto OnErrorExit;
-
-    ssize_t count=0, len;
-    do {
-        len= read(fdFile, &buffer[count], statbuf.st_size-count);
-        if (len >0) count += len;
-    } while (len < 0 && errno == EINTR);
-    close (fdFile);
-    buffer[count]='\0'; // close string
-
-    *response=buffer;
-    return (int)count;
-
-OnErrorExit:
-    return -1;
-}
-
 char *utilStr2Token (str2TokenT *handle, u_int8_t separator, const char* data) {
 
     // on 1st call separator should be defined
